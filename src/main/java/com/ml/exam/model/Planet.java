@@ -12,6 +12,15 @@ public class Planet {
     private Double speed;
     private Boolean clockwise;
 
+    public Planet() {}
+
+    public Planet(String name, Double distance, Double speed, Boolean clockwise) {
+        this.name = name;
+        this.distance = distance;
+        this.speed = speed;
+        this.clockwise = clockwise;
+    }
+
     public String getName() {
         return name;
     }

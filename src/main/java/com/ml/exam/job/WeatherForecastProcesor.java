@@ -21,11 +21,15 @@ public class WeatherForecastProcesor implements Tasklet {
 
     private static final int MAX_DAYS = 3650;
 
-    @Autowired
     private PlanetRepository planetRepository;
-    @Autowired
     private WeatherRepository weatherRepository;
 
+    @Autowired
+    public WeatherForecastProcesor(PlanetRepository planetRepository,
+                                   WeatherRepository weatherRepository) {
+        this.planetRepository = planetRepository;
+        this.weatherRepository = weatherRepository;
+    }
 
     @Override
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) {
@@ -34,7 +38,6 @@ public class WeatherForecastProcesor implements Tasklet {
         Integer maxRainDay = null;
         Double maxPerimeter = 0d;
 
-        // sino, si el origen esta dentro de la figura formada por los puntos = > lluvia. si lo anterior & max perimetro => max lluvia
         for (int d = 1; d <= MAX_DAYS; d++) {
 
             List<Position> coordenates = getPositions(planets, d);
@@ -113,10 +116,15 @@ public class WeatherForecastProcesor implements Tasklet {
     }
 
     private Position getPosition(Planet planet, Integer day) {
+        // Utilizo la siguiente funcion para ubicar la posicion del punto (planeta),
+        // en un tiempo determinado (dia), segun su velocidad angular.
         //x(t) = x0 + r * cos(wt) & y(t) = y0 + r * sen(wt)
-        //w a radianes
+        // (x0, y0) = origen = sol = (0,0)
 
-        return new Position(planet.getDistance() * (Math.cos(Math.toRadians(planet.getSpeed()) * day)),
-                planet.getDistance() * (Math.sin(Math.toRadians(planet.getSpeed()) * day)));
+        //Velocidad angular en radianes.
+        Double w = Math.toRadians(planet.getClockwise() ? planet.getSpeed() : - planet.getSpeed());
+
+        return new Position(planet.getDistance() * (Math.cos(w * day)),
+                planet.getDistance() * (Math.sin(w * day)));
     }
 }
