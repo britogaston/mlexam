@@ -1,0 +1,9 @@
+DROP TABLE planet IF EXISTS;
+
+CREATE TABLE planet (
+
+    name VARCHAR(20) NOT NULL PRIMARY KEY,
+    distance INTEGER NOT NULL,
+    speed INTEGER NOT NULL,
+    clockwise SMALLINT NOT NULL
+);
