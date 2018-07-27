@@ -48,11 +48,7 @@ public class WeatherForecastProcesor implements Tasklet {
                 Double perimeter;
 
                 // TODO Mejorar este bloque de codigo para que funcione con mas de 3 puntos
-                // Si el sol esta entre el triangulo formado por los 3 puntos => lluvia
-                if (coordenates.stream().mapToInt(p -> p.getX().intValue()).min().getAsInt() < 0
-                        && coordenates.stream().mapToInt(p -> p.getX().intValue()).max().getAsInt() > 0
-                        && coordenates.stream().mapToInt(p -> p.getY().intValue()).min().getAsInt() < 0
-                        && coordenates.stream().mapToInt(p -> p.getY().intValue()).max().getAsInt() > 0) {
+                if (rain(coordenates)) {
 
                     condition = WeatherCondition.RAIN;
                     // Para calcular el perimetro, primero debo calcular el largo de sus 3 lados.
@@ -79,6 +75,31 @@ public class WeatherForecastProcesor implements Tasklet {
         }
 
         return RepeatStatus.FINISHED;
+    }
+
+    // Si el sol esta entre el triangulo formado por los 3 puntos => lluvia
+    private boolean rain(List<Position> positions) {
+        Double minX = null;
+        Double maxX = null;
+        Double minY = null;
+        Double maxY = null;
+
+        for (Position p : positions) {
+            if(minX == null || minX > p.getX()) {
+                minX = p.getX();
+            }
+            if(maxX == null || maxX < p.getX()) {
+                maxX = p.getX();
+            }
+            if(minY == null || minY > p.getY()) {
+                minY = p.getY();
+            }
+            if(maxY == null || maxY < p.getY()) {
+                maxY = p.getY();
+            }
+        }
+
+        return !positions.isEmpty() && (minX < 0 && maxX > 0 && minY < 0 && maxY > 0);
     }
 
     // Metodo utilizado para calcular si los planetas y el sol estan alineados
